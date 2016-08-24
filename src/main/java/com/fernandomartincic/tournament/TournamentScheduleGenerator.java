@@ -31,6 +31,28 @@ public class TournamentScheduleGenerator {
 
     private int[][] matched = null;
 
+    private void printMatched() {
+        final StringBuilder sb = new StringBuilder();
+        for (int t = 0; t < numPlayers; t++) {
+            sb.append(String.format("%2d ", t));
+        }
+        sb.append("\n");
+        for (int t = 0; t < numPlayers; t++) {
+            sb.append("---");
+        }
+        sb.append("\n");
+
+        for (int t = 0; t < numPlayers; t++) {
+            for (int s = 0; s < numPlayers; s++) {
+                sb.append(String.format("%2d ", matched[t][s]));
+            }
+            sb.append("\n");
+        }
+
+        System.out.println(sb.toString());
+    }
+
+
     private void resetAvailable() {
         availableMale.clear();
         availableFemale.clear();
@@ -82,17 +104,18 @@ public class TournamentScheduleGenerator {
             schedule.put(round, Lists.newArrayList());
 
             for (int team = 0; team < numPlayers / 4; team++) {
+                System.out.println("\nRound " + (round + 1) + ":");
                 //System.out.println();
                 // get next available players
                 final List<Integer> pool = Lists.newArrayList();
 
                 // get next available male player
-                int i = availableMale.stream().findFirst().get().intValue();
-                pool.add(i);
-                //System.out.println("male 1 = " + i);
-                availableMale.remove(i);
-                //System.out.println(availableMale + " / " + availableFemale);
+                int i = availableMale.stream().min(Integer::min).get().intValue();
 
+                pool.add(i);
+                System.out.println("male 1 = " + i);
+                availableMale.remove(i);
+                System.out.println(availableMale + " / " + availableFemale);
 
                 // get partner
                 i = availableFemale.stream()
@@ -103,8 +126,7 @@ public class TournamentScheduleGenerator {
                             return Integer.compare(getMatchedScore(pool, p1.intValue()), getMatchedScore(pool, p2.intValue()));
                         })
                         .get();
-                //System.out.println("female 1 = " + i);
-                //System.out.println();
+                System.out.println("female 1 = " + i);
                 pool.add(i);
                 availableFemale.remove(i);
                 //System.out.println(availableMale + " / " + availableFemale);
@@ -118,8 +140,7 @@ public class TournamentScheduleGenerator {
                             return Integer.compare(getMatchedScore(pool, p1.intValue()), getMatchedScore(pool, p2.intValue()));
                         })
                         .get();
-                //System.out.println("male 2 = " + i);
-                //System.out.println();
+                System.out.println("male 2 = " + i);
                 pool.add(i);
                 availableMale.remove(i);
                 //System.out.println(availableMale + " / " + availableFemale);
@@ -133,15 +154,13 @@ public class TournamentScheduleGenerator {
                             return Integer.compare(getMatchedScore(pool, p1.intValue()), getMatchedScore(pool, p2.intValue()));
                         })
                         .get();
-                //System.out.println("female 2 = " + i);
-                //System.out.println();
+                System.out.println("female 2 = " + i);
                 pool.add(i);
                 availableFemale.remove(i);
                 //System.out.println(availableMale + " / " + availableFemale);
                 updateMatched(pool, 1);
-                updateMatched(pool.subList(0, 2), numPlayers);
-                updateMatched(pool.subList(2, 4), numPlayers);
-
+                updateMatched(pool.subList(0, 2), numPlayers * 2);
+                updateMatched(pool.subList(2, 4), numPlayers * 2);
 
                 //System.out.println(pool);
                 printMatched();
@@ -151,21 +170,9 @@ public class TournamentScheduleGenerator {
         }
 
 
-        printSchedule();
+        //printSchedule();
     }
 
-
-    private void printMatched() {
-        final StringBuilder sb = new StringBuilder();
-        for (int t = 0; t < numPlayers; t++) {
-            for (int s = 0; s < numPlayers; s++) {
-                sb.append(String.format("%2d ", matched[t][s]));
-            }
-            sb.append("\n");
-        }
-
-        //System.out.println(sb.toString());
-    }
 
     private void updateMatched(final List<Integer> pool, final int incrementAmount) {
         //System.out.println("pool=" + pool);
