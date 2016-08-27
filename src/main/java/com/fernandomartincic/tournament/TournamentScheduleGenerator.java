@@ -133,7 +133,7 @@ public class TournamentScheduleGenerator {
         int row = numMale + 3;
         for (int currentRound = 0; currentRound < numRounds; currentRound++) {
             final List<List<Integer>> pools = schedule.get(currentRound);
-            body.append("\nRound: " + (currentRound + 1) + ",Set 1, Set 2,Set 3,,Set 1,Set 2,Set 3\n");
+            body.append("\nRound: " + (currentRound + 1) + ",Score,,Score\n");
             row += 2;
 
             for (final List<Integer> pool : pools) {
@@ -145,34 +145,21 @@ public class TournamentScheduleGenerator {
                                 + ",E1,"
                                 + getPlayerCell(pool.get(1))
                                 + ")\","
-                                + ",,,"
+                                + ","
                                 + "\"=concatenate("
                                 + getPlayerCell(pool.get(2))
                                 + ",E1,"
                                 + getPlayerCell(pool.get(3))
-                                + ")\","
-                                + ",,,"
+                                + ")\""
                                 + "\n"
                 );
 
                 // update total sum entries
                 final String rr = String.valueOf(row - 1);
                 totalSumString.get(pool.get(0)).add("B" + rr);
-                totalSumString.get(pool.get(0)).add("C" + rr);
-                totalSumString.get(pool.get(0)).add("D" + rr);
-
                 totalSumString.get(pool.get(1)).add("B" + rr);
-                totalSumString.get(pool.get(1)).add("C" + rr);
-                totalSumString.get(pool.get(1)).add("D" + rr);
-
-
-                totalSumString.get(pool.get(2)).add("F" + rr);
-                totalSumString.get(pool.get(2)).add("G" + rr);
-                totalSumString.get(pool.get(2)).add("H" + rr);
-
-                totalSumString.get(pool.get(3)).add("F" + rr);
-                totalSumString.get(pool.get(3)).add("G" + rr);
-                totalSumString.get(pool.get(3)).add("H" + rr);
+                totalSumString.get(pool.get(2)).add("D" + rr);
+                totalSumString.get(pool.get(3)).add("D" + rr);
             }
 
         }
