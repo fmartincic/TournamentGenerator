@@ -19,7 +19,8 @@ public class TournamentScheduleGenerator {
 
     public static void main(final String[] args) {
         TournamentScheduleGenerator gen = new TournamentScheduleGenerator();
-        gen.generate(16, 16, 8);
+        int m = 16;
+        gen.generate(m, m, m / 2);
     }
 
     private int numMale = 0;
@@ -40,47 +41,62 @@ public class TournamentScheduleGenerator {
         this.numPlayers = numMale + numFemale;
         this.numRounds = numRounds;
 
+        int offset = 2;
         for (int round = 0; round < numRounds; round++) {
             schedule.put(round, Lists.newArrayList());
-
-            final List<List<Integer>> malePairs = getPairs(0, numMale, round);
+            final List<List<Integer>> malePairs = getPairs(numMale, round, 0);
             System.out.println(malePairs);
-            final List<List<Integer>> femalePairs = getPairs(numMale, numPlayers, round);
+            final List<List<Integer>> femalePairs = getPairs(numFemale, offset, 0);
+            offset += 2;
             System.out.println(femalePairs);
             System.out.println();
 
+            List<List<Integer>> pools = combinePairs(malePairs, femalePairs);
 
+            schedule.put(round, pools);
         }
 
 
         //printSchedule();
     }
 
-    private List<List<Integer>> getPairs(final int startNumber, final int endNumber, final int offset) {
-        int front = startNumber + offset;
-        int back = endNumber - 1 + offset;
+    private List<List<Integer>> combinePairs(final List<List<Integer>> malePairs, final List<List<Integer>> femalePairs) {
 
-        if (back > endNumber) {
-            back = front - 1;
+        List<List<Integer>> combined = new ArrayList<>();
+        malePairs.stream()
+                .forEach();
+
+
+        return combined;
+    }
+
+    private List<List<Integer>> getPairs(int size, int offset, int additional) {
+        int front = offset;
+        int back = offset - 1;
+
+        if (back < 0) {
+            back = size - 1;
         }
 
         final List<List<Integer>> pairs = new ArrayList<>();
 
-        for (int t = 0; t < 8; t++) {
+        for (int t = 0; t < size / 2; t++) {
             final List<Integer> pair = new ArrayList<>();
-            pair.add(front);
-            pair.add(back);
-            pairs.add(pair);
 
-            front++;
-            if (front >= endNumber) {
-                front = startNumber;
-            }
+            pair.add(front + additional);
+            pair.add(back + additional);
 
             back--;
-            if (back < startNumber) {
-                back = endNumber - 1;
+            if (back < 0) {
+                back = size - 1;
             }
+
+            front++;
+            if (front >= size) {
+                front = 0;
+            }
+
+            pairs.add(pair);
         }
 
         return pairs;
