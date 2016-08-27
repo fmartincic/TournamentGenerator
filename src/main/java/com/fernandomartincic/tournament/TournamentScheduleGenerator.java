@@ -46,33 +46,53 @@ public class TournamentScheduleGenerator {
             schedule.put(round, Lists.newArrayList());
             final List<List<Integer>> malePairs = getPairs(numMale, round, 0);
             System.out.println(malePairs);
-            final List<List<Integer>> femalePairs = getPairs(numFemale, offset, 0);
+            final List<List<Integer>> femalePairs = getPairs(numFemale, offset, numMale);
             offset += 2;
             System.out.println(femalePairs);
-            System.out.println();
 
             List<List<Integer>> pools = combinePairs(malePairs, femalePairs);
+            System.out.println(pools);
 
+            System.out.println();
             schedule.put(round, pools);
         }
 
+        schedule.entrySet()
+                .stream()
+                .forEach(e -> System.out.println(e.getKey() + " (" + e.getValue().size() + "): " + e.getValue()));
 
-        //printSchedule();
+        System.out.println();
+
+
+        printSchedule();
     }
 
     private List<List<Integer>> combinePairs(final List<List<Integer>> malePairs, final List<List<Integer>> femalePairs) {
+        final List<List<Integer>> results = new ArrayList<>();
 
-        List<List<Integer>> combined = new ArrayList<>();
-        malePairs.stream()
-                .forEach();
+        for (int t = 0; t < malePairs.size(); t++) {
+            final List<Integer> pool = new ArrayList<>();
+
+            pool.add(malePairs.get(t).get(0));
+            pool.add(femalePairs.get(t).get(0));
+            pool.add(malePairs.get(t).get(1));
+            pool.add(femalePairs.get(t).get(1));
+
+            results.add(pool);
+
+        }
 
 
-        return combined;
+        return results;
     }
 
     private List<List<Integer>> getPairs(int size, int offset, int additional) {
         int front = offset;
         int back = offset - 1;
+
+        if (front >= size) {
+            front = front - size;
+        }
 
         if (back < 0) {
             back = size - 1;
@@ -103,14 +123,12 @@ public class TournamentScheduleGenerator {
     }
 
     private void printSchedule() {
-
         final StringBuilder body = new StringBuilder();
 
         final Map<Integer, List<String>> totalSumString = new HashMap<>();
         for (int t = 0; t < numPlayers; t++) {
             totalSumString.put(t, new ArrayList<>());
         }
-
 
         int row = numMale + 3;
         for (int currentRound = 0; currentRound < numRounds; currentRound++) {
