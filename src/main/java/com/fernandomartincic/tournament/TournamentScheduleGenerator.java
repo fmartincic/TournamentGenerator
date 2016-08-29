@@ -126,59 +126,67 @@ public class TournamentScheduleGenerator {
         final StringBuilder body = new StringBuilder();
 
         final Map<Integer, List<String>> totalSumString = new HashMap<>();
+        final Map<Integer, List<String>> totalWinsString = new HashMap<>();
         for (int t = 0; t < numPlayers; t++) {
             totalSumString.put(t, new ArrayList<>());
+            totalWinsString.put(t, new ArrayList<>());
         }
 
         int row = numMale + 3;
         for (int currentRound = 0; currentRound < numRounds; currentRound++) {
             final List<List<Integer>> pools = schedule.get(currentRound);
-            body.append("\nRound: " + (currentRound + 1) + ",Score,,Score\n");
+            body.append("\nRound " + (currentRound + 1) + ":,Score,Win = 1,,Score, Win = 1\n");
             row += 2;
 
             for (final List<Integer> pool : pools) {
-                row++;
                 // output
                 body.append(
                         "\"=concatenate("
                                 + getPlayerCell(pool.get(0))
-                                + ",E1,"
+                                + ",G1,"
                                 + getPlayerCell(pool.get(1))
                                 + ")\","
-                                + ","
+                                + ",\"=if(B" + row + ">E" + row + ",1,0)\","
                                 + "\"=concatenate("
                                 + getPlayerCell(pool.get(2))
-                                + ",E1,"
+                                + ",G1,"
                                 + getPlayerCell(pool.get(3))
                                 + ")\""
+                                + ",,\"=if(E" + row + ">B" + row + ",1,0)\""
                                 + "\n"
                 );
+                row++;
 
                 // update total sum entries
                 final String rr = String.valueOf(row - 1);
                 totalSumString.get(pool.get(0)).add("B" + rr);
                 totalSumString.get(pool.get(1)).add("B" + rr);
-                totalSumString.get(pool.get(2)).add("D" + rr);
-                totalSumString.get(pool.get(3)).add("D" + rr);
+                totalSumString.get(pool.get(2)).add("E" + rr);
+                totalSumString.get(pool.get(3)).add("E" + rr);
+
+                // update total number of wins
+                totalWinsString.get(pool.get(0)).add("C" + rr);
+                totalWinsString.get(pool.get(1)).add("C" + rr);
+                totalWinsString.get(pool.get(2)).add("F" + rr);
+                totalWinsString.get(pool.get(3)).add("F" + rr);
             }
 
         }
 
         final StringBuilder header = new StringBuilder();
-        header.append("Male,Total Score,Female,Total Score,\" - \"\n");
+        header.append("Male,Total Score,Total Wins,Female,Total Score,Total Wins,\" - \"\n");
         for (int t = 0; t < numMale; t++) {
-            header.append("M" + t + "," + getPlayerTotalScore(totalSumString.get(t))
-                    + ",F" + (t + numMale) + "," + getPlayerTotalScore(totalSumString.get(t + numMale))
+            header.append("M" + t + ","
+                    + getPlayerTotalScore(totalSumString.get(t)) + ","
+                    + getPlayerTotalScore(totalWinsString.get(t)) + ","
+                    + "F" + (t + numMale) + ","
+                    + getPlayerTotalScore(totalSumString.get(t + numMale)) + ","
+                    + getPlayerTotalScore(totalWinsString.get(t + numMale))
                     + "\n");
         }
 
         System.out.println(header);
         System.out.println(body.toString());
-
-//        System.out.println("\n\n\n");
-//        for (int t = 0; t < numPlayers; t++) {
-//            System.out.println(totalSumString.get(t));
-//        }
 
 
     }
@@ -199,7 +207,7 @@ public class TournamentScheduleGenerator {
         if (playerNum < numMale) {
             return "A" + (playerNum + 2);
         } else {
-            return "C" + (playerNum - numMale + 2);
+            return "D" + (playerNum - numMale + 2);
         }
     }
 
